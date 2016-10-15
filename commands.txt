@@ -1,0 +1,32 @@
+git commit -m "Message"
+
+git log
+
+git reset --hard commit-id
+
+git stash
+
+git checkout -b old-state commit-id
+
+git revert commit-id
+
+git revert --no-commit 0766c053..HEAD
+
+git reset --hard <commidId> && git clean -f
+
+git add . && git checkout master -f
+
+git add . && git reset --hard HEAD
+
+git reset --soft HEAD~1
+
+git reset --soft [previous Commit SHA id here]
+
+git log --pretty=oneline
+
+git checkout -b newbranch
+
+git reset HEAD --hard <commit_id>
+
+git reset --hard origin/master
+
