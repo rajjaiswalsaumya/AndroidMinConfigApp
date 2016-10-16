@@ -1,18 +1,11 @@
 apply plugin: 'com.android.application'
-apply plugin: 'android-apt'
+apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'me.tatarka.retrolambda'
-
-//def AAVersion = '1.0'
-//def AppID = 'com.example.androidminconfigapp'
 
 
 android {
     compileSdkVersion 24
     buildToolsVersion "24.0.3"
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
     defaultConfig {
         applicationId "com.example.androidminconfigapp"
         minSdkVersion 24
@@ -21,6 +14,17 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    sourceSets {
+        androidTest.java.srcDirs = ['src/androidTest/java', 'src/sharedTest/java']
+        test.java.srcDirs = ['src/test/java', 'src/sharedTest/java']
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -28,27 +32,89 @@ android {
         }
     }
     packagingOptions {
+        exclude 'META-INF/services/javax.annotation.processing.Processor'
         exclude 'META-INF/LICENSE'
         exclude 'META-INF/NOTICE'
     }
 }
 
-apt {
-    arguments {
-        androidManifestFile variant.outputs[0].processResources.manifestFile
-        resourcePackageName 'com.example.androidminconfigapp'
-    }
+//noinspection GroovyAssignabilityCheck
+configurations.all {
+    resolutionStrategy.force deps.supportannotations
 }
+
+//apt {
+//    arguments {
+//        androidManifestFile variant.outputs[0].processResources.manifestFile
+//        resourcePackageName 'com.example.androidminconfigapp'
+//    }
+//}
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    compile 'com.android.support:appcompat-v7:24.2.1'
-    testCompile 'junit:junit:4.12'
+//    testCompile 'junit:junit:4.12'
+//    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+//        exclude group: 'com.android.support', module: 'support-annotations'
+//    })
+//    compile 'com.android.support:appcompat-v7:24.2.1'
+//    compile 'com.squareup.retrofit2:retrofit:2.+'
+//    compile 'com.squareup.retrofit2:converter-gson:2.+'
+//    compile 'com.squareup.retrofit2:adapter-rxjava:2.+'
+//
+//    compile 'io.reactivex:rxjava:1.0.4'
+//    compile 'io.reactivex:rxandroid:0.24.0'
+//
+//    apt 'com.google.dagger:dagger-compiler:2.1'
+//    compile 'com.google.dagger:dagger:2.1'
+//    provided 'org.glassfish:javax.annotation:10.0-b28'
+
+    // Support
+    compile deps.appcompat
+
+    // RxJava
+    compile deps.rxjava
+    compile deps.rxandroid
+
+    // ButterKnife
+    compile deps.butterknife
+
+    // Dagger
+    compile deps.dagger
+    apt deps.daggercompiler
+    provided deps.glassfishannotations
+
+    // Unit
+    testCompile deps.junit
+    testCompile deps.robolectric
+    testCompile deps.mockito
+
+    // Integration
+    androidTestCompile deps.testrunner
+    androidTestCompile deps.testrules
+    androidTestCompile deps.espresso
+    androidTestCompile deps.mockito
+    androidTestCompile deps.dexmaker
+    androidTestCompile deps.dexmakermockito
+    androidTestCompile deps.spoon
 }
 
-retrolambda {
-   // jvmArgs '-noverify'
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.stanfy.spoon:spoon-gradle-plugin:1.0.2'
+    }
 }
+
+apply plugin: 'spoon'
+
+spoon {
+    debug = true
+}
+
+//retrolambda {
+//    // jvmArgs '-noverify'
+//}
