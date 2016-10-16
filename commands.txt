@@ -30,3 +30,6 @@ git reset HEAD --hard <commit_id>
 
 git reset --hard origin/master
 
+git tag -a v1.2 commit-id -m "Message here"
+
+git push --tags origin master
